@@ -25,6 +25,15 @@ for i in range(10):
     scoreRect.append(score[i].get_rect())
     scoreRect[i].center = width/2,height/5
     score[i].convert()
+# Pipes
+pipes = []
+pipesRect = []
+for i, type in enumerate(["green", "red"]):
+    pipes.append(pg.image.load("flappy-bird-assets/sprites/pipe-" + type + ".png"))
+    pipesRect.append(pipes[i].get_rect())
+    pipesRect[i].centerx = width
+    pipesRect[i].bottom = baseRect.y
+
 # Player
 mainPlayer = Player((width/2, height/2), screen)
 
@@ -40,7 +49,7 @@ while True:
     screen.blit(dayBg, (0,0)) 
     screen.blit(score[0], scoreRect[0])
     screen.blit(base, baseRect)
-
+    screen.blit(pipes[0], pipesRect[0])
     # Game play
     mainPlayer.display()
     # screen.blit(playerImg, (width/2, height/2)) 
