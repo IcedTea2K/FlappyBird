@@ -24,7 +24,6 @@ while True:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             sys.exit() # exit the program if the window is closed
-
     screen.blit(dayBg, (0,0)) # draw the background
     mainPlayer.display()
     # screen.blit(playerImg, (width/2, height/2)) 

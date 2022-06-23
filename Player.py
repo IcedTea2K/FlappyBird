@@ -10,7 +10,6 @@ class Player:
         for bird in ['yellowbird', 'bluebird', 'redbird']:
             temp = []
             for dir in ['upflap', 'midflap', 'downflap']:
-                str = "flappy-bird-assets/sprites/" + bird + "-" + dir+ ".png"
                 temp.append(pg.image.load("flappy-bird-assets/sprites/" + bird + "-" + dir+ ".png"))
             self.sprites.append(temp)
     
