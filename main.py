@@ -1,5 +1,6 @@
 import sys
 import pygame as pg
+from Player import *
 pg.init()
 
 # Setting up the window
@@ -14,7 +15,7 @@ pg.display.set_icon(icon)
 dayBg = pg.image.load("flappy-bird-assets/sprites/background-day.png")
 nightBg = pg.image.load("flappy-bird-assets/sprites/background-night.png")
 # Player
-playerImg = pg.image.load("flappy-bird-assets/sprites/bluebird-midflap.png")
+mainPlayer = Player((width/2, height/2), screen)
 
 # Game Loop
 while True:
@@ -25,5 +26,6 @@ while True:
             sys.exit() # exit the program if the window is closed
 
     screen.blit(dayBg, (0,0)) # draw the background
-    screen.blit(playerImg, (width/2, height/2)) 
+    mainPlayer.display()
+    # screen.blit(playerImg, (width/2, height/2)) 
     pg.display.update()
