@@ -14,7 +14,10 @@ pg.display.set_icon(icon)
 # Background
 dayBg = pg.image.load("flappy-bird-assets/sprites/background-day.png")
 nightBg = pg.image.load("flappy-bird-assets/sprites/background-night.png")
-# Extras
+base =  pg.image.load("flappy-bird-assets/sprites/base.png")
+baseRect = base.get_rect()
+baseRect.center = width/2, height-56
+# Scores
 score = []
 scoreRect = []
 for i in range(10):
@@ -27,13 +30,18 @@ mainPlayer = Player((width/2, height/2), screen)
 
 # Game Loop
 while True:
-    screen.fill((255,128,255))
+    screen.fill((255,128,255)) # reseting the fram
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
             sys.exit() # exit the program if the window is closed
-    screen.blit(dayBg, (0,0)) # draw the background
+
+    # Draw Background
+    screen.blit(dayBg, (0,0)) 
     screen.blit(score[0], scoreRect[0])
+    screen.blit(base, baseRect)
+
+    # Game play
     mainPlayer.display()
     # screen.blit(playerImg, (width/2, height/2)) 
     pg.display.update()
