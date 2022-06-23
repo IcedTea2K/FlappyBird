@@ -14,4 +14,7 @@ class Player:
             self.sprites.append(temp)
     
     def display(self):
-        self.screen.blit(self.sprites[self.state][self.currDir], self.pos)
+        img = self.sprites[self.state][self.currDir]
+        rect = img.get_rect()
+        rect.center = self.pos
+        self.screen.blit(img, rect)
