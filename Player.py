@@ -2,6 +2,7 @@ import pygame as pg
 
 class Player:
     velocity = pg.Vector2(0,1)
+    acceleration = pg.Vector2(0, 0.1)
     def __init__(self, pos, screen) -> None:
         self.screen = screen
         self.pos = pos
@@ -17,6 +18,7 @@ class Player:
         self.rect = self.img.get_rect()
     
     def move(self):
+        self.velocity += self.acceleration
         self.pos += self.velocity
     
     def detect(self, baseRect, pipeRect):
