@@ -51,6 +51,6 @@ while True:
     screen.blit(base, baseRect)
     screen.blit(pipes[0], pipesRect[0])
     # Game play
-    mainPlayer.display()
+    mainPlayer.display(baseRect, pipesRect[0])
     # screen.blit(playerImg, (width/2, height/2)) 
     pg.display.update()
