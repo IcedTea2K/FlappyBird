@@ -35,7 +35,7 @@ for i, type in enumerate(["green", "red"]):
     pipesRect[i].bottom = baseRect.y
 
 # Player
-mainPlayer = Player((width/2, height/2), screen)
+mainPlayer = Player(pg.Vector2(width/2, height/2), screen)
 
 # Game Loop
 while True:
@@ -44,7 +44,15 @@ while True:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             sys.exit() # exit the program if the window is closed
+        elif event.type == pg.KEYDOWN:
 
+            if event.key == pg.K_SPACE:
+                mainPlayer.fly = True
+                mainPlayer.prevPos.update(mainPlayer.pos)
+        elif event.type == pg.KEYUP:
+            if event.key == pg.K_SPACE and mainPlayer.fly is None:
+                mainPlayer.fly = False
+                # print(mainPlayer.fly)
     # Draw Background
     screen.blit(dayBg, (0,0)) 
     screen.blit(score[0], scoreRect[0])
