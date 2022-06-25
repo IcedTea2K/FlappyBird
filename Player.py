@@ -1,11 +1,11 @@
 import pygame as pg
 
 class Player:
-    velocity = pg.Vector2(0,1)
+    velocity = pg.Vector2(0,0)
     fallForce = pg.Vector2(0, 0.1)
-    flyForce = pg.Vector2(0,-0.5)
+    flyForce = pg.Vector2(0,-3)
     prevPos = pg.Vector2(0.0)
-    topHeight = 2
+    topHeight = 20
     def __init__(self, pos, screen) -> None:
         self.screen = screen
         self.pos = pos
@@ -25,11 +25,16 @@ class Player:
     def move(self):
         if self.fly is True:
             self.velocity += self.flyForce
-            self.fly = (self.pos.y >= (self.prevPos.y -self.topHeight))
-            print("pos: " + str(self.pos) + "     " + "top: " + str (self.prevPos.y - self.topHeight))
+            self.fly = False
+        # if self.fly is True:
+        #     if self.pos.y >= (self.prevPos.y -self.topHeight):
+        #         self.velocity += self.flyForce
+        #     else:
+        #         self.fly = False
+        #     print("pos: " + str(self.pos) + "     " + "top: " + str (self.prevPos.y - self.topHeight))
             # print(self.fly)
-        else:
-            self.velocity += self.fallForce
+        
+        self.velocity += self.fallForce
         self.pos += self.velocity
     
     def detect(self, baseRect, pipeRect):
