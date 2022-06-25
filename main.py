@@ -48,7 +48,6 @@ while True:
 
             if event.key == pg.K_SPACE:
                 mainPlayer.fly = True
-                mainPlayer.prevPos.update(mainPlayer.pos)
         elif event.type == pg.KEYUP:
             if event.key == pg.K_SPACE and mainPlayer.fly is None:
                 mainPlayer.fly = False
