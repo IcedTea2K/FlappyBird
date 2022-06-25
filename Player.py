@@ -1,9 +1,11 @@
+from hmac import new
 import pygame as pg
 
 class Player:
     velocity = pg.Vector2(0,0)
-    fallForce = pg.Vector2(0, 0.1)
-    flyForce = pg.Vector2(0,-3)
+    fallForce = pg.Vector2(0, 0.25)
+    flyForce = pg.Vector2(0,-1.75)
+    currForce = pg.Vector2(0,0)
     prevPos = pg.Vector2(0.0)
     topHeight = 20
     def __init__(self, pos, screen) -> None:
@@ -24,8 +26,15 @@ class Player:
     
     def move(self):
         if self.fly is True:
-            self.velocity += self.flyForce
+            self.velocity.y = 0
+            self.currForce += self.flyForce
             self.fly = False
+        if self.currForce != self.fallForce: self.currForce += self.fallForce
+
+        # if self.fly is True:
+        #     self.velocity += self.flyForce
+        #     self.fly = False
+        
         # if self.fly is True:
         #     if self.pos.y >= (self.prevPos.y -self.topHeight):
         #         self.velocity += self.flyForce
@@ -33,8 +42,8 @@ class Player:
         #         self.fly = False
         #     print("pos: " + str(self.pos) + "     " + "top: " + str (self.prevPos.y - self.topHeight))
             # print(self.fly)
-        
-        self.velocity += self.fallForce
+        print(str(self.currForce) + " " + str(self.velocity))
+        self.velocity += self.currForce
         self.pos += self.velocity
     
     def detect(self, baseRect, pipeRect):
