@@ -7,6 +7,7 @@ pg.init()
 size = width, height = 288,512
 speed = [2,2]
 screen  = pg.display.set_mode(size) # create scene
+fpsClock = pg.time.Clock()
 pg.display.set_caption("Flappy Bird")
 icon = pg.image.load("flappy-bird-assets/favicon.png")
 pg.display.set_icon(icon)
@@ -35,7 +36,7 @@ for i, type in enumerate(["green", "red"]):
     pipesRect[i].bottom = baseRect.y
 
 # Player
-mainPlayer = Player(pg.Vector2(width/2, height/2), screen)
+mainPlayer = Player(pg.Vector2(width/2, height/2), screen, fpsClock)
 
 # Game Loop
 while True:
@@ -61,3 +62,4 @@ while True:
     mainPlayer.display(baseRect, pipesRect[0])
     # screen.blit(playerImg, (width/2, height/2)) 
     pg.display.update()
+    fpsClock.tick(60)

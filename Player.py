@@ -1,13 +1,12 @@
-from hmac import new
 import pygame as pg
-
 class Player:
     velocity = pg.Vector2(0,0)
     fallForce = pg.Vector2(0, 0.25)
     flyForce = pg.Vector2(0,-1.75)
     currForce = pg.Vector2(0,0)
-    def __init__(self, pos, screen) -> None:
+    def __init__(self, pos, screen, clock) -> None:
         self.screen = screen
+        self.clock = clock
         self.pos = pos
         self.state = 0 # 0 - yellow, 1 - blue, 2 - red
         self.fly = False
@@ -38,9 +37,14 @@ class Player:
             return "pipe"
         return None
 
+    def animate(self):
+        frameCount = ((pg.time.get_ticks() / 1000) * 60)%60
+        self.img = self.sprites[self.state][int(frameCount / 5) % len(self.sprites[self.state])]
+        self.rect = self.img.get_rect()
+
     def display(self, baseRect, pipeRect):
         if self.detect(baseRect, pipeRect) is None:
             self.move()
-        
+        self.animate()
         self.rect.center = self.pos
         self.screen.blit(self.img, self.rect)
