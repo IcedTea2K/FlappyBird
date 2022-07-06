@@ -26,6 +26,20 @@ class Player:
         ratio = float(val - old[0]) / float(xRange)
         return new[0] + (ratio * yRange)
 
+    def rotateImg(self, angle: float): # rotate the image counter clock-wise 
+        # https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame
+        width, height = self.img.get_size()
+        box = [pg.math.Vector2(point) for point in [(0,0), (width,0), (width,-height), (0,-height)]] # vertices of bounding box
+        rotatedBox = [point.rotate(angle) for point in box] # rotate the bounding box accordingly
+        # find the maximum and minimum of the rotated bounding box
+        minBox = (min(rotatedBox, key= lambda k: k[0])[0], min(rotatedBox, key= lambda k: k[1])[1])
+        maxBox = (max(rotatedBox, key= lambda k: k[0])[0], max(rotatedBox, key= lambda k: k[1])[1])
+        # move the img to a new position according to the bounding box to prevent the img from getting distorted
+        # the origin of the img is top left so move the img to minX and maxY of rotatedBox
+        origin = (self.pos[0] + minBox[0], self.pos[1] - maxBox[1]) # maxY because cartesian plane is flipped compared to pygame plane
+        rotatedImg = pg.transform.rotate(self.img, angle)
+        return rotatedImg, origin
+
     def move(self):
         if self.fly is True:
             self.velocity.y = 0
@@ -53,5 +67,6 @@ class Player:
             self.move()
         self.animate()
         self.rect.center = self.pos
-        self.screen.blit(self.img, self.rect)
+        surface, newPos = self.rotateImg(0) # newPos is the calculated position after being rotated
+        self.screen.blit(surface, newPos)
         
