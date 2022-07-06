@@ -20,6 +20,12 @@ class Player:
         self.img =  self.sprites[self.state][self.currDir]
         self.rect = self.img.get_rect()
     
+    def map(self, val: float, old: tuple, new: tuple) -> float:
+        xRange = old[1] - old[0] # old range
+        yRange = new[1] - new[0] # new range
+        ratio = float(val - old[0]) / float(xRange)
+        return new[0] + (ratio * yRange)
+
     def move(self):
         if self.fly is True:
             self.velocity.y = 0
@@ -48,3 +54,4 @@ class Player:
         self.animate()
         self.rect.center = self.pos
         self.screen.blit(self.img, self.rect)
+        
