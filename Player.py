@@ -28,17 +28,31 @@ class Player:
 
     def rotateImg(self, angle: float): # rotate the image counter clock-wise 
         # https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame
-        width, height = self.img.get_size()
-        box = [pg.math.Vector2(point) for point in [(0,0), (width,0), (width,-height), (0,-height)]] # vertices of bounding box
-        rotatedBox = [point.rotate(angle) for point in box] # rotate the bounding box accordingly
-        # find the maximum and minimum of the rotated bounding box
-        minBox = (min(rotatedBox, key= lambda k: k[0])[0], min(rotatedBox, key= lambda k: k[1])[1])
-        maxBox = (max(rotatedBox, key= lambda k: k[0])[0], max(rotatedBox, key= lambda k: k[1])[1])
-        # move the img to a new position according to the bounding box to prevent the img from getting distorted
-        # the origin of the img is top left so move the img to minX and maxY of rotatedBox
-        origin = (self.pos[0] + minBox[0], self.pos[1] - maxBox[1]) # maxY because cartesian plane is flipped compared to pygame plane
+        # width, height = self.img.get_size()
+        # box = [pg.math.Vector2(point) for point in [(0,0), (width,0), (width,-height), (0,-height)]] # vertices of bounding box
+        # rotatedBox = [point.rotate(angle) for point in box] # rotate the bounding box accordingly
+        # # find the maximum and minimum of the rotated bounding box
+        # minBox = (min(rotatedBox, key= lambda k: k[0])[0], min(rotatedBox, key= lambda k: k[1])[1])
+        # maxBox = (max(rotatedBox, key= lambda k: k[0])[0], max(rotatedBox, key= lambda k: k[1])[1])
+        # # move the img to a new position according to the bounding box to prevent the img from getting distorted
+        # # the origin of the img is top left so move the img to minX and maxY of rotatedBox
+        # origin = (self.pos[0] + minBox[0], self.pos[1] - maxBox[1]) # maxY because cartesian plane is flipped compared to pygame plane
+        # rotatedImg = pg.transform.rotate(self.img, angle)
+
+        # Calculate the center of the rectangle --> to rotate about the center
+        # newRect = self.img.get_rect(topleft = (self.pos[0] - width/2, self.pos[1] - height/2))
+        # offsetCenter = self.pos - newRect.center
+        # rotatedOffset = offsetCenter.rotate(-angle) # vector2.rotate is inverted to pygame.rotate
+        # rotatedImg = pg.transform.rotate(self.img, angle)
+        # rotatedImgRect = rotatedImg.get_rect(center=rotatedOffset)
+
+        imgCenter = self.pos - pg.math.Vector2(self.rect.center)
+        rotatedCenter = imgCenter.rotate(-angle)  # vector2.rotate is inverted to pygame.rotate
+        newImgCenterPos = self.pos - rotatedCenter
+
+        rotatedRect = self.img.get_rect(center=newImgCenterPos)
         rotatedImg = pg.transform.rotate(self.img, angle)
-        return rotatedImg, origin
+        return rotatedImg, rotatedRect
 
     def move(self):
         if self.fly is True:
@@ -67,6 +81,6 @@ class Player:
             self.move()
         self.animate()
         self.rect.center = self.pos
-        surface, newPos = self.rotateImg(0) # newPos is the calculated position after being rotated
-        self.screen.blit(surface, newPos)
+        surface, newRect= self.rotateImg(0) # newPos is the calculated position after being rotated
+        self.screen.blit(surface, newRect)
         
