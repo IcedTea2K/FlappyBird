@@ -1,18 +1,26 @@
 import pygame as pg
 class Player:
+    # Game's Variables
+    screen = None
+    clock = None
+    # Initial State and Appearance
+    sprites = []
+    fly = False
+    state = 0  # 0 - yellow, 1 - blue, 2 - red
+    currDir = 1  # 0 - up, 1 - mid, 2 - down
+    img = None
+    rect = None
+    # Birds characteristics - acceleration, speed, position, and rotation
     velocity = pg.Vector2(0,0)
     fallForce = pg.Vector2(0, 0.25)
     flyForce = pg.Vector2(0,-1.75)
     currForce = pg.Vector2(0,0)
+    pos = None # Assinged in constructor
     currAngle = 0 # current rotation 
     def __init__(self, pos, screen, clock) -> None:
         self.screen = screen
         self.clock = clock
         self.pos = pos
-        self.state = 0 # 0 - yellow, 1 - blue, 2 - red
-        self.fly = False
-        self.currDir = 1 # 0 - up, 1 - mid, 2 - down
-        self.sprites = []
         for bird in ['yellowbird', 'bluebird', 'redbird']:
             temp = []
             for dir in ['upflap', 'midflap', 'downflap']:
