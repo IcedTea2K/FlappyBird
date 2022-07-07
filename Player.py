@@ -4,6 +4,7 @@ class Player:
     fallForce = pg.Vector2(0, 0.25)
     flyForce = pg.Vector2(0,-1.75)
     currForce = pg.Vector2(0,0)
+    currAngle = 0 # current rotation 
     def __init__(self, pos, screen, clock) -> None:
         self.screen = screen
         self.clock = clock
@@ -20,12 +21,6 @@ class Player:
         self.img =  self.sprites[self.state][self.currDir]
         self.rect = self.img.get_rect()
     
-    def map(self, val: float, old: tuple, new: tuple) -> float:
-        xRange = old[1] - old[0] # old range
-        yRange = new[1] - new[0] # new range
-        ratio = float(val - old[0]) / float(xRange)
-        return new[0] + (ratio * yRange)
-
     def rotateImg(self, angle: float): # rotate the image counter clock-wise 
         # https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame
         imgCenter = self.pos - pg.math.Vector2(self.rect.center)
@@ -40,11 +35,14 @@ class Player:
         if self.fly is True:
             self.velocity.y = 0
             self.currForce += self.flyForce
+            self.currAngle = 20 # rotate the bird upward when spacebar is pressed
             self.fly = False
         if self.currForce != self.fallForce: self.currForce += self.fallForce
 
         self.velocity += self.currForce
         self.pos += self.velocity
+        if self.velocity.y >= 4 and self.currAngle > -90:
+            self.currAngle -= 5
     
     def detect(self, baseRect, pipeRect):
         if self.rect.colliderect(baseRect):
@@ -63,6 +61,6 @@ class Player:
             self.move()
         self.animate()
         self.rect.center = self.pos
-        surface, newRect= self.rotateImg(0) # newPos is the calculated position after being rotated
+        surface, newRect= self.rotateImg(self.currAngle) # newRect is the calculated position after being rotated
         self.screen.blit(surface, newRect)
         
