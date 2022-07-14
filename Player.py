@@ -1,26 +1,14 @@
 import pygame as pg
 class Player:
-    # Game's Variables
-    screen = None
-    clock = None
-    # Initial State and Appearance
-    sprites = []
-    fly = False
-    state = 0  # 0 - yellow, 1 - blue, 2 - red
-    currDir = 1  # 0 - up, 1 - mid, 2 - down
-    img = None
-    rect = None
-    # Birds characteristics - acceleration, speed, position, and rotation
-    velocity = pg.Vector2(0,0)
-    fallForce = pg.Vector2(0, 0.25)
-    flyForce = pg.Vector2(0,-1.75)
-    currForce = pg.Vector2(0,0)
-    pos = None # Assinged in constructor
-    currAngle = 0 # current rotation 
     def __init__(self, pos, screen, clock) -> None:
+        # Game's Variables 
         self.screen = screen
         self.clock = clock
-        self.pos = pos
+        # Initial State and Appearance
+        self.sprites = []
+        self.fly = False
+        self.state = 0  # 0 - yellow, 1 - blue, 2 - red
+        self.currDir = 1  # 0 - up, 1 - mid, 2 - down
         for bird in ['yellowbird', 'bluebird', 'redbird']:
             temp = []
             for dir in ['upflap', 'midflap', 'downflap']:
@@ -28,6 +16,13 @@ class Player:
             self.sprites.append(temp)
         self.img =  self.sprites[self.state][self.currDir]
         self.rect = self.img.get_rect()
+        # Birds characteristics - acceleration, speed, position, and rotation
+        self.velocity = pg.Vector2(0,0)
+        self.fallForce = pg.Vector2(0, 0.25)
+        self.flyForce = pg.Vector2(0,-1.75)
+        self.currForce = pg.Vector2(0,0)
+        self.currAngle = 0 # current rotation 
+        self.pos = pos
     
     def rotateImg(self, angle: float): # rotate the image counter clock-wise 
         # https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame
