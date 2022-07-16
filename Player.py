@@ -59,10 +59,10 @@ class Player:
         self.img = self.sprites[self.state][int(frameCount / 5) % len(self.sprites[self.state])]
         self.rect = self.img.get_rect()
 
-    def display(self, baseRect, pipeRect):
-        if self.detect(baseRect, pipeRect) is None:
+    def display(self, baseRect):
+        if not self.rect.colliderect(baseRect):
             self.move()
-        self.animate()
+            self.animate()
         self.rect.center = self.pos
         surface, newRect= self.rotateImg(self.currAngle) # newRect is the calculated position after being rotated
         self.screen.blit(surface, newRect)
