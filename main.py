@@ -1,6 +1,7 @@
 import sys
 import pygame as pg
 from Player import *
+from Pipe import *
 pg.init()
 
 # Setting up the window
@@ -27,14 +28,7 @@ for i in range(10):
     scoreRect[i].center = width/2,height/5
     score[i].convert()
 # Pipes
-pipes = []
-pipesRect = []
-for i, type in enumerate(["green", "red"]):
-    pipes.append(pg.image.load("flappy-bird-assets/sprites/pipe-" + type + ".png"))
-    pipesRect.append(pipes[i].get_rect())
-    pipesRect[i].centerx = width
-    pipesRect[i].bottom = baseRect.y
-
+a = Pipe(screen, 0)
 # Player
 mainPlayer = Player(pg.Vector2(width/2, height/2), screen, fpsClock)
 
@@ -57,9 +51,10 @@ while True:
     screen.blit(dayBg, (0,0)) 
     screen.blit(score[0], scoreRect[0])
     screen.blit(base, baseRect)
-    screen.blit(pipes[0], pipesRect[0])
+    # screen.blit(pipes[0], pipesRect[0])
+    a.display() 
     # Game play
-    mainPlayer.display(baseRect, pipesRect[0])
+    mainPlayer.display(baseRect )
     # screen.blit(playerImg, (width/2, height/2)) 
     pg.display.update()
     fpsClock.tick(60)
