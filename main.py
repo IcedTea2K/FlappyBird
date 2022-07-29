@@ -12,7 +12,6 @@ fpsClock = pg.time.Clock()
 pg.display.set_caption("Flappy Bird")
 icon = pg.image.load("flappy-bird-assets/favicon.png")
 pg.display.set_icon(icon)
-
 # Background
 dayBg = pg.image.load("flappy-bird-assets/sprites/background-day.png")
 nightBg = pg.image.load("flappy-bird-assets/sprites/background-night.png")
@@ -28,10 +27,13 @@ for i in range(10):
     scoreRect[i].center = width/2,height/5
     score[i].convert()
 # Pipes
-a = Pipe(screen, mode=1 , speed=1)
+pipes = [Pipe(screen, mode=1 , speed=1)]
+SPAWN_RATE = 3 # every two seconds
 # Player
 mainPlayer = Player(pg.Vector2(width/2, height/2), screen, fpsClock)
-
+# Custom Events
+SPAWN_PIPES_EVENT = pg.USEREVENT + 1
+pg.time.set_timer(SPAWN_PIPES_EVENT, int(SPAWN_RATE*1000))
 # Game Loop
 while True:
     screen.fill((255,128,255)) # reseting the fram
@@ -40,18 +42,22 @@ while True:
         if event.type == pg.QUIT:
             sys.exit() # exit the program if the window is closed
         elif event.type == pg.KEYDOWN:
-
             if event.key == pg.K_SPACE:
                 mainPlayer.fly = True
         elif event.type == pg.KEYUP:
             if event.key == pg.K_SPACE and mainPlayer.fly is None:
                 mainPlayer.fly = False
                 # print(mainPlayer.fly)
+        elif event.type == SPAWN_PIPES_EVENT:
+            pipes.append(Pipe(screen, mode=1,speed=1))
     # Draw Background
     screen.blit(dayBg, (0,0)) 
     screen.blit(base, baseRect)
-    # screen.blit(pipes[0], pipesRect[0])
-    a.display() 
+    for pipe in reversed(pipes): # remove the pipe without skipping the next pipe
+        if pipe.pos[0] < -52:
+            pipes.remove(pipe)
+        else:
+            pipe.display()
     # Game play
     mainPlayer.display(baseRect )
     screen.blit(score[0], scoreRect[0])

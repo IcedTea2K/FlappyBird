@@ -7,17 +7,19 @@ class Pipe:
         self.screen = screen
         self.speed = speed
         # Appearance and location 
-        self.pipes = []
         if mode == 0:
-            self.pipes = pg.image.load("flappy-bird-assets/sprites/pipe-" + "green" + ".png")
+            self.pipe = pg.image.load("flappy-bird-assets/sprites/pipe-" + "green" + ".png")
         else:
-            self.pipes = pg.image.load("flappy-bird-assets/sprites/pipe-" + "red" + ".png") 
+            self.pipe = pg.image.load("flappy-bird-assets/sprites/pipe-" + "red" + ".png") 
         self.pos = [pg.display.get_surface().get_width(), pg.display.get_surface().get_height() - 112]
-        w,h = self.pipes.get_size()
-        self.botPipe = pg.transform.scale(self.pipes, (w, h*random.random())) # do not have to keep the original because it's only resized once
+        w,h = self.pipe.get_size()
+        self.botPipe = pg.transform.scale(self.pipe, (w, h*random.random())) # do not have to keep the original because it's only resized once
         w,h = self.botPipe.get_size()
-        self.topPipe = pg.transform.scale(self.pipes, (w, self.pos[1] - h - self.GAP))
-        self.topPipe = pg.transform.flip(self.topPipe, False, True)
+        if not self.pos[1] - h - self.GAP <= 0:
+            self.topPipe = pg.transform.scale(self.pipe, (w, self.pos[1] - h - self.GAP))
+            self.topPipe = pg.transform.flip(self.topPipe, False, True)
+        else:
+            self.topPipe = None
 
     def move(self):
        self.pos[0] -= self.speed 
@@ -25,5 +27,5 @@ class Pipe:
     def display(self):
         self.move()
         self.screen.blit(self.botPipe, self.botPipe.get_rect(left=self.pos[0], bottom = self.pos[1]))
-        self.screen.blit(self.topPipe, self.pipes.get_rect(left=self.pos[0], top = 0))
-        print(self.pipes.get_size())  
+        if self.topPipe is not None:
+            self.screen.blit(self.topPipe, self.pipe.get_rect(left=self.pos[0], top = 0))
