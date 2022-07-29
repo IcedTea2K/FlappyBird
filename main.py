@@ -28,7 +28,7 @@ for i in range(10):
     scoreRect[i].center = width/2,height/5
     score[i].convert()
 # Pipes
-a = Pipe(screen, 0)
+a = Pipe(screen, mode=1, speed=1)
 # Player
 mainPlayer = Player(pg.Vector2(width/2, height/2), screen, fpsClock)
 
@@ -49,12 +49,12 @@ while True:
                 # print(mainPlayer.fly)
     # Draw Background
     screen.blit(dayBg, (0,0)) 
-    screen.blit(score[0], scoreRect[0])
     screen.blit(base, baseRect)
     # screen.blit(pipes[0], pipesRect[0])
     a.display() 
     # Game play
     mainPlayer.display(baseRect )
+    screen.blit(score[0], scoreRect[0])
     # screen.blit(playerImg, (width/2, height/2)) 
     pg.display.update()
     fpsClock.tick(60)
