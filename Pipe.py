@@ -5,16 +5,13 @@ class Pipe:
         self.speed = speed
         # Appearance and location 
         self.pipes = []
-        self.pipesRect = []
         for i, type in enumerate(["green", "red"]):
             self.pipes.append(pg.image.load("flappy-bird-assets/sprites/pipe-" + type + ".png"))
-            self.pipesRect.append(self.pipes[i].get_rect())
-            self.pipesRect[i].centerx = pg.display.get_surface().get_width()
-            self.pipesRect[i].bottom = pg.display.get_surface().get_height() - 112
+            self.pos = (pg.display.get_surface().get_width(), pg.display.get_surface().get_height() - 112)
 
     def move(self):
        pass 
 
     def display(self):
-        self.screen.blit(self.pipes[0], self.pipesRect[0]) 
+        self.screen.blit(self.pipes[0], self.pipes[0].get_rect(centerx=self.pos[0], bottom = self.pos[1])) 
         pass
