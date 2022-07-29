@@ -10,8 +10,7 @@ class Pipe:
             self.pipes.append(pg.image.load("flappy-bird-assets/sprites/pipe-" + type + ".png"))
             self.pipesRect.append(self.pipes[i].get_rect())
             self.pipesRect[i].centerx = pg.display.get_surface().get_width()
-            self.pipesRect[i].bottom = pg.display.get_surface().get_height() - 56
-        pass
+            self.pipesRect[i].bottom = pg.display.get_surface().get_height() - 112
 
     def move(self):
        pass 
