@@ -65,11 +65,12 @@ class Player:
         else:
             self.move()
 
-        if any([newRect.colliderect(x) for x in pipeRect]):
+        if any([newRect.colliderect(x) for x in pipeRect]) or (self.pos.y < 0 and any([pipe.x < self.pos.x for pipe in pipeRect])):
             self.fallForce.y = 1
             self.currForce.y = 0  # reset the velocity and acceleration to make falling seems
             self.velocity.y = 0 if self.velocity.y < 0 else self.velocity.y # more abrupt 
             return False        
+
         self.animate()
         return True # still alive 
         
