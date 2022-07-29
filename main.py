@@ -28,7 +28,7 @@ for i in range(10):
     scoreRect[i].center = width/2,height/5
     score[i].convert()
 # Pipes
-a = Pipe(screen, mode=1, speed=1)
+a = Pipe(screen, mode=1 , speed=1)
 # Player
 mainPlayer = Player(pg.Vector2(width/2, height/2), screen, fpsClock)
 
