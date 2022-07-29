@@ -22,6 +22,7 @@ baseRect.center = width/2, height-56
 # Scores
 score = []
 scoreRect = []
+currScore = 0
 for i in range(10):
     score.append(pg.image.load("flappy-bird-assets/sprites/" + str(i) + ".png"))
     scoreRect.append(score[i].get_rect())
@@ -36,6 +37,17 @@ mainPlayer = Player(pg.Vector2(width/2, height/2), screen, fpsClock)
 GAME_STATE = 1 # 0 - menu, 1 - playing, 2 - finished
 SPAWN_PIPES_EVENT = pg.USEREVENT + 1
 pg.time.set_timer(SPAWN_PIPES_EVENT, int(SPAWN_RATE*1000))
+def drawScore():
+    tempScore = currScore
+    # digits = []
+    if tempScore == 0:
+       screen.blit(score[0], scoreRect[0])
+       return 
+    while tempScore >0:
+        digit = tempScore%10
+        tempScore = int(tempScore/10)
+        screen.blit(score[digit], scoreRect[digit])
+
 # Game Loop
 while True:
     screen.fill((255,128,255)) # reseting the fram
@@ -62,8 +74,10 @@ while True:
     # Game play
     if not mainPlayer.display(baseRect, pipes[0].get_rect()): # always detect collision with the first pipe
         GAME_STATE = 2
-    screen.blit(score[0], scoreRect[0])
+    
+    # screen.blit(score[0], scoreRect[0])
+    drawScore() 
     
     # screen.blit(playerImg, (width/2, height/2)) 
     pg.display.update()
-    fpsClock.tick(60)
+    fpsClock.tick(60) 
