@@ -1,3 +1,4 @@
+from math import gamma
 import sys
 import pygame as pg
 from Player import *
@@ -32,6 +33,7 @@ SPAWN_RATE = 3 # every two seconds
 # Player
 mainPlayer = Player(pg.Vector2(width/2, height/2), screen, fpsClock)
 # Custom Events
+GAME_STATE = 1 # 0 - menu, 1 - playing, 2 - finished
 SPAWN_PIPES_EVENT = pg.USEREVENT + 1
 pg.time.set_timer(SPAWN_PIPES_EVENT, int(SPAWN_RATE*1000))
 # Game Loop
@@ -42,13 +44,12 @@ while True:
         if event.type == pg.QUIT:
             sys.exit() # exit the program if the window is closed
         elif event.type == pg.KEYDOWN:
-            if event.key == pg.K_SPACE:
+            if event.key == pg.K_SPACE and GAME_STATE == 1 :
                 mainPlayer.fly = True
-        elif event.type == pg.KEYUP:
+        elif event.type == pg.KEYUP and GAME_STATE == 1:
             if event.key == pg.K_SPACE and mainPlayer.fly is None:
                 mainPlayer.fly = False
-                # print(mainPlayer.fly)
-        elif event.type == SPAWN_PIPES_EVENT:
+        elif event.type == SPAWN_PIPES_EVENT and GAME_STATE == 1:
             pipes.append(Pipe(screen, mode=1,speed=1))
     # Draw Background
     screen.blit(dayBg, (0,0)) 
@@ -57,10 +58,12 @@ while True:
         if pipe.pos[0] < -52:
             pipes.remove(pipe)
         else:
-            pipe.display()
+            pipe.display(GAME_STATE == 1)
     # Game play
-    mainPlayer.display(baseRect )
+    if not mainPlayer.display(baseRect, pipes[0].get_rect()): # always detect collision with the first pipe
+        GAME_STATE = 2
     screen.blit(score[0], scoreRect[0])
+    
     # screen.blit(playerImg, (width/2, height/2)) 
     pg.display.update()
     fpsClock.tick(60)

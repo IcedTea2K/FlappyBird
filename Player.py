@@ -1,3 +1,4 @@
+from email.mime import base
 import pygame as pg
 class Player:
     def __init__(self, pos, screen, clock) -> None:
@@ -43,27 +44,32 @@ class Player:
         if self.currForce != self.fallForce: self.currForce += self.fallForce
 
         self.velocity += self.currForce
+        
         self.pos += self.velocity
+        if self.pos.y > self.screen.get_height() - 112:
+            self.pos.y = self.screen.get_height() - 112 
         if self.velocity.y >= 4 and self.currAngle > -90:
             self.currAngle -= 5
-    
-    def detect(self, baseRect, pipeRect):
-        if self.rect.colliderect(baseRect):
-            return "base"
-        elif self.rect.colliderect(pipeRect):
-            return "pipe"
-        return None
 
     def animate(self):
         frameCount = ((pg.time.get_ticks() / 1000) * 60)%60
         self.img = self.sprites[self.state][int(frameCount / 5) % len(self.sprites[self.state])]
         self.rect = self.img.get_rect()
 
-    def display(self, baseRect):
-        if not self.rect.colliderect(baseRect):
-            self.move()
-            self.animate()
+    def display(self, baseRect, pipeRect):
         self.rect.center = self.pos
         surface, newRect= self.rotateImg(self.currAngle) # newRect is the calculated position after being rotated
         self.screen.blit(surface, newRect)
+        if newRect.colliderect(baseRect):
+            return False
+        else:
+            self.move()
+
+        if any([newRect.colliderect(x) for x in pipeRect]):
+            self.fallForce.y = 1
+            self.currForce.y = 0  # reset the velocity and acceleration to make falling seems
+            self.velocity.y = 0 if self.velocity.y < 0 else self.velocity.y # more abrupt 
+            return False        
+        self.animate()
+        return True # still alive 
         
