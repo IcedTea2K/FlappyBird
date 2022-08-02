@@ -1,3 +1,4 @@
+import enum
 from math import gamma
 import sys
 import pygame as pg
@@ -21,13 +22,30 @@ baseRect = base.get_rect()
 baseRect.center = width/2, height-56
 # Scores
 score = []
-scoreRect = []
+scoreHeight = height/5
 currScore = 0
 for i in range(10):
     score.append(pg.image.load("flappy-bird-assets/sprites/" + str(i) + ".png"))
-    scoreRect.append(score[i].get_rect())
-    scoreRect[i].center = width/2,height/5
     score[i].convert()
+def drawScore():
+    if currScore < 10:
+        rect = score[currScore].get_rect(center=(width/2, height/6))
+        screen.blit(score[currScore], rect)
+    tempScore = currScore
+    digits = []
+    while tempScore >0:
+        digits.append(tempScore%10)
+        tempScore = int(tempScore/10)
+
+    for i, digit in reversed(list(enumerate(digits))):
+        
+        rect = score[digit].get_rect(center=(width/2, height/6))
+        size = score[digit].get_size()
+        # print(((len(digits)-1)/2 - i)*size[0])
+        offset = size[0] if digit != 1 else size[0]+4
+        rect.move_ip(((len(digits)-1)/2.0 - i)*offset, 0)
+        screen.blit(score[digit], rect)
+
 # Pipes
 pipes = [Pipe(screen, mode=1 , speed=1)]
 SPAWN_RATE = 3 # every two seconds
@@ -37,17 +55,7 @@ mainPlayer = Player(pg.Vector2(width/2, height/2), screen, fpsClock)
 GAME_STATE = 1 # 0 - menu, 1 - playing, 2 - finished
 SPAWN_PIPES_EVENT = pg.USEREVENT + 1
 pg.time.set_timer(SPAWN_PIPES_EVENT, int(SPAWN_RATE*1000))
-def drawScore():
-    tempScore = currScore
-    # digits = []
-    if tempScore == 0:
-       screen.blit(score[0], scoreRect[0])
-       return 
-    while tempScore >0:
-        digit = tempScore%10
-        tempScore = int(tempScore/10)
-        screen.blit(score[digit], scoreRect[digit])
-
+        
 # Game Loop
 while True:
     screen.fill((255,128,255)) # reseting the fram
@@ -73,9 +81,9 @@ while True:
             pipes.remove(pipe)
         else:
             pipe.display(GAME_STATE == 1)
-    if not mainPlayer.display(baseRect, pipes[len(pipes)-1].get_rect()): # always detect collision with the first pipe
+    if not mainPlayer.display(baseRect, pipes[len(pipes)-1].get_rect()):
         GAME_STATE = 2
     drawScore() 
-    
+
     pg.display.update()
     fpsClock.tick(60) 
