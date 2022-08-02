@@ -3,7 +3,6 @@ import random
 class Pipe:
     GAP = 100
     def __init__(self, screen, mode, speed) -> None:
-        type = ["green", "red"]
         self.screen = screen
         self.speed = speed
         # Appearance and location 

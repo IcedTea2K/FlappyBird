@@ -47,7 +47,7 @@ def drawScore():
         screen.blit(score[digit], rect)
 
 # Pipes
-pipes = [Pipe(screen, mode=1 , speed=1)]
+pipes = [Pipe(screen, mode=0, speed=1)]
 SPAWN_RATE = 3 # every two seconds
 # Player
 mainPlayer = Player(pg.Vector2(width/2, height/2), screen, fpsClock)
@@ -70,7 +70,7 @@ while True:
             if event.key == pg.K_SPACE and mainPlayer.fly is None:
                 mainPlayer.fly = False
         elif event.type == SPAWN_PIPES_EVENT and GAME_STATE == 1:
-            pipes.append(Pipe(screen, mode=1,speed=1))
+            pipes.append(Pipe(screen, mode=0,speed=1))
     # Draw Background
     screen.blit(dayBg, (0,0)) 
     screen.blit(base, baseRect)
