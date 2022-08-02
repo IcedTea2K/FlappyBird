@@ -1,3 +1,4 @@
+from calendar import c
 import enum
 from math import gamma
 import sys
@@ -33,12 +34,11 @@ def drawScore():
         screen.blit(score[currScore], rect)
     tempScore = currScore
     digits = []
-    while tempScore >0:
+    while tempScore >0: # extract the digits of the score 
         digits.append(tempScore%10)
         tempScore = int(tempScore/10)
 
     for i, digit in reversed(list(enumerate(digits))):
-        
         rect = score[digit].get_rect(center=(width/2, height/6))
         size = score[digit].get_size()
         # print(((len(digits)-1)/2 - i)*size[0])
@@ -77,12 +77,14 @@ while True:
     
     # Game play
     for pipe in reversed(pipes): # remove the pipe without skipping the next pipe
-        if pipe.pos[0] < -52:
+        if pipe.pos[0] < -52: # remove pipes that are off the screen
             pipes.remove(pipe)
         else:
             pipe.display(GAME_STATE == 1)
-    if not mainPlayer.display(baseRect, pipes[len(pipes)-1].get_rect()):
+    if not mainPlayer.display(baseRect, pipes[len(pipes)-1].get_rect()): # check collision while displaying bird
         GAME_STATE = 2
+    if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
+        currScore+=1
     drawScore() 
 
     pg.display.update()
