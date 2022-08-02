@@ -66,18 +66,16 @@ while True:
     # Draw Background
     screen.blit(dayBg, (0,0)) 
     screen.blit(base, baseRect)
+    
+    # Game play
     for pipe in reversed(pipes): # remove the pipe without skipping the next pipe
         if pipe.pos[0] < -52:
             pipes.remove(pipe)
         else:
             pipe.display(GAME_STATE == 1)
-    # Game play
-    if not mainPlayer.display(baseRect, pipes[0].get_rect()): # always detect collision with the first pipe
+    if not mainPlayer.display(baseRect, pipes[len(pipes)-1].get_rect()): # always detect collision with the first pipe
         GAME_STATE = 2
-    
-    # screen.blit(score[0], scoreRect[0])
     drawScore() 
     
-    # screen.blit(playerImg, (width/2, height/2)) 
     pg.display.update()
     fpsClock.tick(60) 
