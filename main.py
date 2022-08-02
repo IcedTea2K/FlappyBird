@@ -47,7 +47,8 @@ def drawScore():
         screen.blit(score[digit], rect)
 
 # Pipes
-pipes = [Pipe(screen, mode=0, speed=1)]
+currPipeMode = 0
+pipes = [Pipe(screen, mode=currPipeMode, speed=1)]
 SPAWN_RATE = 3 # every two seconds
 # Player
 mainPlayer = Player(pg.Vector2(width/2, height/2), screen, fpsClock)
@@ -59,7 +60,11 @@ pg.time.set_timer(SPAWN_PIPES_EVENT, int(SPAWN_RATE*1000))
 # Game Loop
 while True:
     screen.fill((255,128,255)) # reseting the fram
-
+    # Draw Background
+    screen.blit(dayBg, (0,0)) 
+    screen.blit(base, baseRect)
+    
+    # Game play
     for event in pg.event.get():
         if event.type == pg.QUIT:
             sys.exit() # exit the program if the window is closed
@@ -70,12 +75,10 @@ while True:
             if event.key == pg.K_SPACE and mainPlayer.fly is None:
                 mainPlayer.fly = False
         elif event.type == SPAWN_PIPES_EVENT and GAME_STATE == 1:
-            pipes.append(Pipe(screen, mode=0,speed=1))
-    # Draw Background
-    screen.blit(dayBg, (0,0)) 
-    screen.blit(base, baseRect)
-    
-    # Game play
+            pipes.append(Pipe(screen, mode=currPipeMode,speed=1)) 
+            
+
+    # Game Master
     for pipe in reversed(pipes): # remove the pipe without skipping the next pipe
         if pipe.pos[0] < -52: # remove pipes that are off the screen
             pipes.remove(pipe)
@@ -85,7 +88,15 @@ while True:
         GAME_STATE = 2
     if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
         currScore+=1
-    drawScore() 
+    drawScore()
+
+    time = pg.time.get_ticks()/1000 # calculate running time
+    if time > 15 and time <45: # change bird's color
+        mainPlayer.state = 1
+    elif time > 45:
+        mainPlayer.state = 2
+    if time > 30: # change pipe's color
+        currPipeMode = 1
 
     pg.display.update()
     fpsClock.tick(60) 
