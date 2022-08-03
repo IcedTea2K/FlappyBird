@@ -62,7 +62,7 @@ def setTimers() -> None:
     pg.time.set_timer(SWITCH_DAYTIME_EVENT, 10000)
     pg.time.set_timer(SPAWN_PIPES_EVENT, 3000)
     pg.time.set_timer(SWITCH_PIPE_EVENT, 30000)
-    pg.time.set_timer(SWITCH_BIRD_EVENT, 5000)
+    pg.time.set_timer(SWITCH_BIRD_EVENT, 20000)
 def stopTimers() -> None:
     pg.time.set_timer(SWITCH_DAYTIME_EVENT, 0)
     pg.time.set_timer(SPAWN_PIPES_EVENT, 0)
