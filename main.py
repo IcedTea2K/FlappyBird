@@ -25,12 +25,11 @@ baseRect = base.get_rect()
 baseRect.center = width/2, height-56
 # Scores
 score = []
-scoreHeight = height/5
 currScore = 0
 for i in range(10):
     score.append(pg.image.load("flappy-bird-assets/sprites/" + str(i) + ".png"))
     score[i].convert()
-def drawScore():
+def drawScore() -> None: 
     if currScore < 10:
         rect = score[currScore].get_rect(center=(width/2, height/6))
         screen.blit(score[currScore], rect)
@@ -62,14 +61,6 @@ pg.time.set_timer(SPAWN_PIPES_EVENT, 3000)
         
 # Game Loop
 while True:
-    screen.fill((255,128,255)) # reseting the fram
-    # Draw Background
-    if isDay:
-        screen.blit(dayBg, (0,0)) 
-    else:
-        screen.blit(nightBg, (0,0))
-    screen.blit(base, baseRect)
-    
     # Game play
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -84,20 +75,27 @@ while True:
             pipes.append(Pipe(screen, mode=currPipeMode,speed=1)) 
         elif event.type == SWITCH_DAYTIME_EVENT:
             isDay = not isDay
-            
 
-    # Game Master
+    
+    # Draw Background
+    screen.fill((255,128,255)) # reseting the fram
+    if isDay:
+        screen.blit(dayBg, (0,0)) 
+    else:
+        screen.blit(nightBg, (0,0))
+    screen.blit(base, baseRect) 
     for pipe in reversed(pipes): # remove the pipe without skipping the next pipe
         if pipe.pos[0] < -52: # remove pipes that are off the screen
             pipes.remove(pipe)
         else:
             pipe.display(GAME_STATE == 1)
+
+    # Game Master
     if not mainPlayer.display(baseRect, pipes[len(pipes)-1].get_rect()): # check collision while displaying bird
         GAME_STATE = 2
     if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
         currScore+=1
     drawScore()
-
     time = pg.time.get_ticks()/1000 # calculate running time
     if time > 15 and time <45: # change bird's color
         mainPlayer.state = 1
