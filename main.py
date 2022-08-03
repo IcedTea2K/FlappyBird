@@ -20,6 +20,8 @@ pg.display.set_icon(icon)
 isDay = True
 dayBg = pg.image.load("flappy-bird-assets/sprites/background-day.png")
 nightBg = pg.image.load("flappy-bird-assets/sprites/background-night.png")
+endScreen = pg.image.load("flappy-bird-assets/sprites/gameover.png")
+endScreenRect = endScreen.get_rect(center=(width/2, height/3 + 30))
 base =  pg.image.load("flappy-bird-assets/sprites/base.png")
 baseRect = base.get_rect()
 baseRect.center = width/2, height-56
@@ -76,7 +78,6 @@ while True:
         elif event.type == SWITCH_DAYTIME_EVENT:
             isDay = not isDay
 
-    
     # Draw Background
     screen.fill((255,128,255)) # reseting the fram
     if isDay:
@@ -84,6 +85,7 @@ while True:
     else:
         screen.blit(nightBg, (0,0))
     screen.blit(base, baseRect) 
+    
     for pipe in reversed(pipes): # remove the pipe without skipping the next pipe
         if pipe.pos[0] < -52: # remove pipes that are off the screen
             pipes.remove(pipe)
@@ -96,6 +98,12 @@ while True:
     if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
         currScore+=1
     drawScore()
+
+    if GAME_STATE == 0:
+        pass
+    elif GAME_STATE == 2: # show end screen
+        screen.blit(endScreen, endScreenRect)
+    
     time = pg.time.get_ticks()/1000 # calculate running time
     if time > 15 and time <45: # change bird's color
         mainPlayer.state = 1
