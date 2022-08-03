@@ -55,9 +55,20 @@ mainPlayer = Player(pg.Vector2(142,304), screen, fpsClock)
 # Custom Events
 GAME_STATE = 0 # 0 - menu, 1 - playing, 2 - finished
 SPAWN_PIPES_EVENT = pg.USEREVENT + 1
-SWITCH_DAYTIME_EVENT = pg.USEREVENT + 2 # switch the background periodically 
+SWITCH_PIPE_EVENT = pg.USEREVENT + 2 
+SWITCH_DAYTIME_EVENT = pg.USEREVENT + 3 # switch the background periodically 
+SWITCH_BIRD_EVENT = pg.USEREVENT + 4
+def setTimers() -> None:
+    pg.time.set_timer(SWITCH_DAYTIME_EVENT, 10000)
+    pg.time.set_timer(SPAWN_PIPES_EVENT, 3000)
+    pg.time.set_timer(SWITCH_PIPE_EVENT, 30000)
+    pg.time.set_timer(SWITCH_BIRD_EVENT, 20000)
+def stopTimers() -> None:
+    pg.time.set_timer(SWITCH_DAYTIME_EVENT, 0)
+    pg.time.set_timer(SPAWN_PIPES_EVENT, 0)
+    pg.time.set_timer(SWITCH_PIPE_EVENT, 0)
+    pg.time.set_timer(SWITCH_BIRD_EVENT, 0)
 
-        
 # Game Loop
 while True:
     # Game play
@@ -65,19 +76,33 @@ while True:
         if event.type == pg.QUIT:
             sys.exit() # exit the program if the window is closed
         elif event.type == pg.KEYDOWN:
-            if event.key == pg.K_SPACE and GAME_STATE != 2:
+            if event.key == pg.K_SPACE:
                 if GAME_STATE == 0: #start the game
-                    pg.time.set_timer(SWITCH_DAYTIME_EVENT, 10000)
-                    pg.time.set_timer(SPAWN_PIPES_EVENT, 3000)
                     GAME_STATE = 1
-                mainPlayer.fly = True                    
+                    setTimers()
+                elif GAME_STATE == 2:
+                    stopTimers() 
+                    GAME_STATE = 0
+                    currScore = 0
+                    pipes.clear() # clear out all current pipes
+                    pipes = [Pipe(screen, mode=currPipeMode, speed=1)] # must add one in to prevent idx error
+                    currPipeMode = 0
+                    mainPlayer = Player(pg.Vector2(142,304), screen, fpsClock)
+                mainPlayer.fly = GAME_STATE != 2 
         elif event.type == pg.KEYUP and GAME_STATE == 1:
             if event.key == pg.K_SPACE and mainPlayer.fly is None:
                 mainPlayer.fly = False
-        elif event.type == SPAWN_PIPES_EVENT and GAME_STATE == 1:
-            pipes.append(Pipe(screen, mode=currPipeMode,speed=1)) 
+        elif event.type == SPAWN_PIPES_EVENT:
+            pipes.append(Pipe(screen, mode=currPipeMode,speed=1))
+        elif event.type == SWITCH_PIPE_EVENT:
+            currPipeMode = 1 if currPipeMode == 0 else 0
         elif event.type == SWITCH_DAYTIME_EVENT:
             isDay = not isDay
+        elif event.type == SWITCH_BIRD_EVENT:
+            if mainPlayer.state < 2:
+                mainPlayer.state += 1
+            else:
+                mainPlayer.state = 0
 
     # Draw Background
     screen.fill((255,128,255)) # reseting the fram
@@ -92,6 +117,8 @@ while True:
             pipes.remove(pipe)
         else:
             pipe.display(GAME_STATE == 1)
+    
+    drawScore()
 
     # Game Master
     if GAME_STATE == 0:
@@ -103,7 +130,6 @@ while True:
         GAME_STATE = 2
     if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
         currScore+=1
-    drawScore()
     
     time = pg.time.get_ticks()/1000 # calculate running time
     if time > 15 and time <45: # change bird's color
