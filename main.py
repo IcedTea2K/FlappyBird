@@ -80,6 +80,14 @@ while True:
                 if GAME_STATE == 0: #start the game
                     GAME_STATE = 1
                     setTimers()
+                elif GAME_STATE == 2: # reset all stats
+                    GAME_STATE = 0
+                    currScore = 0
+                    isDay = True
+                    pipes.clear() # clear out all current pipes
+                    currPipeMode = 0
+                    pipes = [Pipe(screen, mode=currPipeMode, speed=1)] # must add one in to prevent idx error
+                    mainPlayer.reset()
                 mainPlayer.fly = GAME_STATE != 2 
         elif event.type == pg.KEYUP and GAME_STATE == 1:
             if event.key == pg.K_SPACE and mainPlayer.fly is None:
@@ -117,16 +125,14 @@ while True:
         screen.blit(menuScreen, menuScreenRect)
     elif GAME_STATE == 2: # show end screen
         screen.blit(endScreen, endScreenRect)
-        stopTimers() 
-        GAME_STATE = 0
-        currScore = 0
-        isDay = True
-        pipes.clear() # clear out all current pipes
-        currPipeMode = 0
-        pipes = [Pipe(screen, mode=currPipeMode, speed=1)] # must add one in to prevent idx error
-        mainPlayer.reset()
+        stopTimers()
 
-    if not mainPlayer.display(baseRect, pipes[len(pipes)-1].get_rect(), GAME_STATE): # check collision while displaying bird
+    nextPipe = None
+    if len(pipes) > 1 and pipes[0].pos[0] < width/2 - 50:
+        nextPipe = pipes[1]
+    else:
+        nextPipe = pipes[0]
+    if not mainPlayer.display(baseRect, nextPipe.get_rect(), GAME_STATE): # check collision while displaying bird
         GAME_STATE = 2
     if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
         currScore+=1
