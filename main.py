@@ -1,7 +1,3 @@
-from calendar import c
-import enum
-from math import gamma
-from pydoc import isdata
 import sys
 import pygame as pg
 from Player import *
@@ -20,6 +16,8 @@ pg.display.set_icon(icon)
 isDay = True
 dayBg = pg.image.load("flappy-bird-assets/sprites/background-day.png")
 nightBg = pg.image.load("flappy-bird-assets/sprites/background-night.png")
+menuScreen = pg.image.load("flappy-bird-assets/sprites/message.png")
+menuScreenRect = menuScreen.get_rect(center=(width/2, height/2))
 endScreen = pg.image.load("flappy-bird-assets/sprites/gameover.png")
 endScreenRect = endScreen.get_rect(center=(width/2, height/3 + 30))
 base =  pg.image.load("flappy-bird-assets/sprites/base.png")
@@ -53,13 +51,12 @@ def drawScore() -> None:
 currPipeMode = 0
 pipes = [Pipe(screen, mode=currPipeMode, speed=1)]
 # Player
-mainPlayer = Player(pg.Vector2(width/2, height/2), screen, fpsClock)
+mainPlayer = Player(pg.Vector2(142,304), screen, fpsClock)
 # Custom Events
-GAME_STATE = 1 # 0 - menu, 1 - playing, 2 - finished
+GAME_STATE = 0 # 0 - menu, 1 - playing, 2 - finished
 SPAWN_PIPES_EVENT = pg.USEREVENT + 1
 SWITCH_DAYTIME_EVENT = pg.USEREVENT + 2 # switch the background periodically 
-pg.time.set_timer(SWITCH_DAYTIME_EVENT, 10000)
-pg.time.set_timer(SPAWN_PIPES_EVENT, 3000)
+
         
 # Game Loop
 while True:
@@ -68,8 +65,12 @@ while True:
         if event.type == pg.QUIT:
             sys.exit() # exit the program if the window is closed
         elif event.type == pg.KEYDOWN:
-            if event.key == pg.K_SPACE and GAME_STATE == 1 :
-                mainPlayer.fly = True
+            if event.key == pg.K_SPACE and GAME_STATE != 2:
+                if GAME_STATE == 0: #start the game
+                    pg.time.set_timer(SWITCH_DAYTIME_EVENT, 10000)
+                    pg.time.set_timer(SPAWN_PIPES_EVENT, 3000)
+                    GAME_STATE = 1
+                mainPlayer.fly = True                    
         elif event.type == pg.KEYUP and GAME_STATE == 1:
             if event.key == pg.K_SPACE and mainPlayer.fly is None:
                 mainPlayer.fly = False
@@ -93,16 +94,16 @@ while True:
             pipe.display(GAME_STATE == 1)
 
     # Game Master
-    if not mainPlayer.display(baseRect, pipes[len(pipes)-1].get_rect()): # check collision while displaying bird
+    if GAME_STATE == 0:
+        screen.blit(menuScreen, menuScreenRect)
+        # GAME_STATE = 1
+    elif GAME_STATE == 2: # show end screen
+        screen.blit(endScreen, endScreenRect)
+    if not mainPlayer.display(baseRect, pipes[len(pipes)-1].get_rect(), GAME_STATE): # check collision while displaying bird
         GAME_STATE = 2
     if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
         currScore+=1
     drawScore()
-
-    if GAME_STATE == 0:
-        pass
-    elif GAME_STATE == 2: # show end screen
-        screen.blit(endScreen, endScreenRect)
     
     time = pg.time.get_ticks()/1000 # calculate running time
     if time > 15 and time <45: # change bird's color

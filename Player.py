@@ -1,4 +1,3 @@
-from email.mime import base
 import pygame as pg
 class Player:
     def __init__(self, pos, screen, clock) -> None:
@@ -56,14 +55,15 @@ class Player:
         self.img = self.sprites[self.state][int(frameCount / 5) % len(self.sprites[self.state])]
         self.rect = self.img.get_rect()
 
-    def display(self, baseRect, pipeRect):
+    def display(self, baseRect, pipeRect, gameState):
         self.rect.center = self.pos
         surface, newRect= self.rotateImg(self.currAngle) # newRect is the calculated position after being rotated
         self.screen.blit(surface, newRect)
         if newRect.colliderect(baseRect):
             return False
         else:
-            self.move()
+            if gameState >= 1:
+                self.move()
 
         if any([newRect.colliderect(x) for x in pipeRect]) or (self.pos.y < 0 and any([pipe.x < self.pos.x for pipe in pipeRect])):
             self.fallForce.y = 1
