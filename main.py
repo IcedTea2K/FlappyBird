@@ -62,7 +62,7 @@ def setTimers() -> None:
     pg.time.set_timer(SWITCH_DAYTIME_EVENT, 10000)
     pg.time.set_timer(SPAWN_PIPES_EVENT, 3000)
     pg.time.set_timer(SWITCH_PIPE_EVENT, 30000)
-    pg.time.set_timer(SWITCH_BIRD_EVENT, 20000)
+    pg.time.set_timer(SWITCH_BIRD_EVENT, 5000)
 def stopTimers() -> None:
     pg.time.set_timer(SWITCH_DAYTIME_EVENT, 0)
     pg.time.set_timer(SPAWN_PIPES_EVENT, 0)
@@ -80,14 +80,6 @@ while True:
                 if GAME_STATE == 0: #start the game
                     GAME_STATE = 1
                     setTimers()
-                elif GAME_STATE == 2:
-                    stopTimers() 
-                    GAME_STATE = 0
-                    currScore = 0
-                    pipes.clear() # clear out all current pipes
-                    pipes = [Pipe(screen, mode=currPipeMode, speed=1)] # must add one in to prevent idx error
-                    currPipeMode = 0
-                    mainPlayer = Player(pg.Vector2(142,304), screen, fpsClock)
                 mainPlayer.fly = GAME_STATE != 2 
         elif event.type == pg.KEYUP and GAME_STATE == 1:
             if event.key == pg.K_SPACE and mainPlayer.fly is None:
@@ -123,21 +115,22 @@ while True:
     # Game Master
     if GAME_STATE == 0:
         screen.blit(menuScreen, menuScreenRect)
-        # GAME_STATE = 1
     elif GAME_STATE == 2: # show end screen
         screen.blit(endScreen, endScreenRect)
+        stopTimers() 
+        GAME_STATE = 0
+        currScore = 0
+        isDay = True
+        pipes.clear() # clear out all current pipes
+        currPipeMode = 0
+        pipes = [Pipe(screen, mode=currPipeMode, speed=1)] # must add one in to prevent idx error
+        mainPlayer.reset()
+
     if not mainPlayer.display(baseRect, pipes[len(pipes)-1].get_rect(), GAME_STATE): # check collision while displaying bird
         GAME_STATE = 2
     if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
         currScore+=1
-    
-    time = pg.time.get_ticks()/1000 # calculate running time
-    if time > 15 and time <45: # change bird's color
-        mainPlayer.state = 1
-    elif time > 45:
-        mainPlayer.state = 2
-    if time > 30: # change pipe's color
-        currPipeMode = 1
+
     # print(time)
     pg.display.update()
     fpsClock.tick(60) 

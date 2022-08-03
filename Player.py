@@ -8,13 +8,12 @@ class Player:
         self.sprites = []
         self.fly = False
         self.state = 0  # 0 - yellow, 1 - blue, 2 - red
-        self.currDir = 1  # 0 - up, 1 - mid, 2 - down
         for bird in ['yellowbird', 'bluebird', 'redbird']:
             temp = []
             for dir in ['upflap', 'midflap', 'downflap']:
                 temp.append(pg.image.load("flappy-bird-assets/sprites/" + bird + "-" + dir+ ".png"))
             self.sprites.append(temp)
-        self.img =  self.sprites[self.state][self.currDir]
+        self.img =  self.sprites[self.state][1]
         self.rect = self.img.get_rect()
         # Birds characteristics - acceleration, speed, position, and rotation
         self.velocity = pg.Vector2(0,0)
@@ -22,7 +21,10 @@ class Player:
         self.flyForce = pg.Vector2(0,-1.75)
         self.currForce = pg.Vector2(0,0)
         self.currAngle = 0 # current rotation 
-        self.pos = pos
+        self.pos = pg.Vector2(0,0)
+        self.initPos = pg.Vector2(0,0)
+        self.pos.update(pos)
+        self.initPos.update(pos)
     
     def rotateImg(self, angle: float): # rotate the image counter clock-wise 
         # https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame
@@ -54,6 +56,15 @@ class Player:
         frameCount = ((pg.time.get_ticks() / 1000) * 60)%60
         self.img = self.sprites[self.state][int(frameCount / 5) % len(self.sprites[self.state])]
         self.rect = self.img.get_rect()
+
+    def reset(self) -> None:
+        self.state = 0
+        self.pos.update(self.initPos)
+        self.velocity = pg.Vector2(0,0)
+        self.fallForce = pg.Vector2(0, 0.25)
+        self.flyForce = pg.Vector2(0,-1.75)
+        self.currForce = pg.Vector2(0,0)
+        self.currAngle = 0 # current rotation 
 
     def display(self, baseRect, pipeRect, gameState):
         self.rect.center = self.pos
