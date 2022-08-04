@@ -56,6 +56,7 @@ def drawScore() -> None:
     if currScore < 10:
         rect = score[currScore].get_rect(center=(width/2, height/6))
         screen.blit(score[currScore], rect)
+        return
     tempScore = currScore
     digits = []
     while tempScore >0: # extract the digits of the score 
