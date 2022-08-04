@@ -119,7 +119,7 @@ while True:
                     mainPlayer.reset()
                 mainPlayer.fly = GAME_STATE != 2 # prevent bird from moving when on the ground
         elif event.type == pg.KEYUP and GAME_STATE == 1:
-            if event.key == pg.K_SPACE and mainPlayer.fly is None:
+            if event.key == pg.K_SPACE:
                 mainPlayer.fly = False
         elif event.type == SPAWN_PIPES_EVENT: # add pipes
             pipes.append(Pipe(screen, mode=currPipeMode,speed=1))
