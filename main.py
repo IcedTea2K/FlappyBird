@@ -13,6 +13,9 @@ pg.display.set_caption("Flappy Bird")
 icon = pg.image.load("flappy-bird-assets/favicon.png")
 pg.display.set_icon(icon)
 # Background
+flashValue = 255
+isFlashing = False
+screenCover = pg.Surface((width, height))
 isDay = True
 dayBg = pg.image.load("flappy-bird-assets/sprites/background-day.png")
 nightBg = pg.image.load("flappy-bird-assets/sprites/background-night.png")
@@ -83,6 +86,7 @@ while True:
                 elif GAME_STATE == 2: # reset all stats
                     GAME_STATE = 0
                     currScore = 0
+                    isFlashing = False
                     isDay = True
                     pipes.clear() # clear out all current pipes
                     currPipeMode = 0
@@ -105,13 +109,12 @@ while True:
                 mainPlayer.state = 0
 
     # Draw Background
-    screen.fill((255,128,255)) # reseting the fram
     if isDay:
         screen.blit(dayBg, (0,0)) 
     else:
         screen.blit(nightBg, (0,0))
     screen.blit(base, baseRect) 
-    
+
     for pipe in reversed(pipes): # remove the pipe without skipping the next pipe
         if pipe.pos[0] < -52: # remove pipes that are off the screen
             pipes.remove(pipe)
@@ -134,8 +137,17 @@ while True:
         nextPipe = pipes[0]
     if not mainPlayer.display(baseRect, nextPipe.get_rect(), GAME_STATE): # check collision while displaying bird
         GAME_STATE = 2
+        flashValue = 0 if not isFlashing else flashValue
     if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
         currScore+=1
+
+    # Ending Flash
+    if flashValue >= 0 and flashValue < 255:
+        isFlashing = True
+        screenCover.set_alpha(flashValue)
+        screenCover.fill((0,0,0))
+        screen.blit(screenCover, (0,0))
+        flashValue += 50
 
     # print(time)
     pg.display.update()
