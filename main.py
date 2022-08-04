@@ -26,7 +26,25 @@ endScreenRect = endScreen.get_rect(center=(width/2, height/3 + 30))
 base =  pg.image.load("flappy-bird-assets/sprites/base.png")
 baseRect = base.get_rect()
 baseRect.center = width/2, height-56
+# Sound Effects
+def loadSfx(effectNum: int) -> None:
+    """
+    0 - die sound, 1 - hit sound, 2 - point sound, 3 - wing sound, 4 - swoosh sound
+    """
+    pg.mixer.music.unload()
+    if effectNum == 0:
+        pg.mixer.music.load("flappy-bird-assets/audio/die.ogg", "ogg")
+    elif effectNum == 1:
+        pg.mixer.music.load("flappy-bird-assets/audio/hit.ogg", "ogg")
+    elif effectNum == 2:
+        pg.mixer.music.load("flappy-bird-assets/audio/point.ogg", "ogg")
+    elif effectNum == 3:
+        pg.mixer.music.load("flappy-bird-assets/audio/wing.ogg", "ogg")
+    elif effectNum == 4:
+        pg.mixer.music.load("flappy-bird-assets/audio/swoosh.ogg", "ogg")
+
 # Scores
+pg.mixer.music.unload()
 score = []
 currScore = 0
 for i in range(10):
@@ -139,6 +157,8 @@ while True:
         GAME_STATE = 2
         flashValue = 0 if not isFlashing else flashValue
     if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
+        loadSfx(2)
+        pg.mixer.music.play()
         currScore+=1
 
     # Ending Flash
