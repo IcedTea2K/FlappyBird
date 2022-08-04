@@ -1,5 +1,6 @@
 import sys
 import pygame as pg
+import queue
 from Player import *
 from Pipe import *
 pg.init()
@@ -27,24 +28,24 @@ base =  pg.image.load("flappy-bird-assets/sprites/base.png")
 baseRect = base.get_rect()
 baseRect.center = width/2, height-56
 # Sound Effects
+soundQ = queue.SimpleQueue()
 def loadSfx(effectNum: int) -> None:
     """
     0 - die sound, 1 - hit sound, 2 - point sound, 3 - wing sound, 4 - swoosh sound
     """
     pg.mixer.music.unload()
-    if effectNum == 0:
-        pg.mixer.music.load("flappy-bird-assets/audio/die.ogg", "ogg")
+    if effectNum == 0: 
+        pg.mixer.music.load("flappy-bird-assets/audio/die.wav", "wav")
     elif effectNum == 1:
-        pg.mixer.music.load("flappy-bird-assets/audio/hit.ogg", "ogg")
+        pg.mixer.music.load("flappy-bird-assets/audio/hit.wav", "wav")
     elif effectNum == 2:
-        pg.mixer.music.load("flappy-bird-assets/audio/point.ogg", "ogg")
+        pg.mixer.music.load("flappy-bird-assets/audio/point.wav", "wav")
     elif effectNum == 3:
-        pg.mixer.music.load("flappy-bird-assets/audio/wing.ogg", "ogg")
+        pg.mixer.music.load("flappy-bird-assets/audio/wing.wav", "wav")
     elif effectNum == 4:
-        pg.mixer.music.load("flappy-bird-assets/audio/swoosh.ogg", "ogg")
-
+        pg.mixer.music.load("flappy-bird-assets/audio/swoosh.wav", "wav")
+    
 # Scores
-pg.mixer.music.unload()
 score = []
 currScore = 0
 for i in range(10):
@@ -153,13 +154,19 @@ while True:
         nextPipe = pipes[1]
     else:
         nextPipe = pipes[0]
-    if not mainPlayer.display(baseRect, nextPipe.get_rect(), GAME_STATE): # check collision while displaying bird
+    if not mainPlayer.display(baseRect, nextPipe.get_rect(), GAME_STATE) and GAME_STATE!= 2: # check collision while displaying bird
         GAME_STATE = 2
         flashValue = 0 if not isFlashing else flashValue
+        soundQ.put(1) # hitting sound
+        if mainPlayer.pos.y < baseRect.y-10: # only when hitting the pipe
+            soundQ.put(0) # falling sound 
     if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
-        loadSfx(2)
-        pg.mixer.music.play()
+        soundQ.put(2) 
         currScore+=1
+    if soundQ.qsize() != 0 and not pg.mixer.music.get_busy():
+        tempSound = soundQ.get()
+        loadSfx(tempSound)
+        pg.mixer.music.play()
 
     # Ending Flash
     if flashValue >= 0 and flashValue < 255:
