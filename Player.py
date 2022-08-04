@@ -1,6 +1,6 @@
 import pygame as pg
 class Player:
-    def __init__(self, pos, screen, clock) -> None:
+    def __init__(self, pos: pg.Vector2, screen: pg.Surface, clock: pg.time.Clock) -> None:
         """A class for bird -- the main character"""
         # Game's Variables 
         self.screen = screen
@@ -27,7 +27,7 @@ class Player:
         self.pos.update(pos)
         self.initPos.update(pos)
     
-    def rotateImg(self, angle: float):
+    def rotateImg(self, angle: float) -> None:
         """
         rotate the image counter clock-wise
         https://stackoverflow.com/questions/4183208/how-do-i-rotate-an-image-around-its-center-using-pygame
@@ -40,7 +40,7 @@ class Player:
         rotatedImg = pg.transform.rotate(self.img, angle)
         return rotatedImg, rotatedRect
 
-    def move(self):
+    def move(self) -> None:
         """Move the bird based on user input and physics"""
         if self.fly is True:
             self.velocity.y = 0
@@ -57,7 +57,7 @@ class Player:
         if self.velocity.y >= 4 and self.currAngle > -90: # boundaries for bird rotation
             self.currAngle -= 5
 
-    def animate(self):
+    def animate(self) -> None:
         """Animate the bird flapping"""
         # milis / 1000 = s * 60 = # of frame passed % 60 = current frame within 60fps cycle
         frameCount = ((pg.time.get_ticks() / 1000) * 60)%60 
@@ -74,7 +74,7 @@ class Player:
         self.currForce = pg.Vector2(0,0)
         self.currAngle = 0 # current rotation 
 
-    def display(self, baseRect, pipeRect, gameState):
+    def display(self, baseRect: pg.Rect, pipeRect: pg.Rect, gameState: int):
         """Display the bird onto the screen while checking for collision"""
         self.rect.center = self.pos
         surface, newRect= self.rotateImg(self.currAngle) # newRect is the calculated position after being rotated
