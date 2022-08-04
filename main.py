@@ -28,7 +28,7 @@ base =  pg.image.load("flappy-bird-assets/sprites/base.png")
 baseRect = base.get_rect()
 baseRect.center = width/2, height-56
 # Sound Effects
-soundQ = queue.SimpleQueue()
+soundQ = queue.Queue()
 def loadSfx(effectNum: int) -> None:
     """
     0 - die sound, 1 - hit sound, 2 - point sound, 3 - wing sound, 4 - swoosh sound
@@ -101,9 +101,11 @@ while True:
             if event.key == pg.K_SPACE:
                 if GAME_STATE == 0: #start the game
                     GAME_STATE = 1
+                    soundQ.put(3)
                     setTimers()
-                elif GAME_STATE == 2: # reset all stats
+                elif GAME_STATE == 2 and not pg.mixer.music.get_busy(): # reset all stats
                     GAME_STATE = 0
+                    soundQ.put(4) # play entering death menu soudn
                     currScore = 0
                     isFlashing = False
                     isDay = True
@@ -163,6 +165,7 @@ while True:
     if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
         soundQ.put(2) 
         currScore+=1
+    # Sound Controller 
     if soundQ.qsize() != 0 and not pg.mixer.music.get_busy():
         tempSound = soundQ.get()
         loadSfx(tempSound)
