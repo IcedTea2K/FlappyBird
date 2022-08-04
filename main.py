@@ -145,13 +145,13 @@ while True:
     drawScore()
 
     # Game Master
-    if GAME_STATE == 0:
+    if GAME_STATE == 0: # Menu Screens
         screen.blit(menuScreen, menuScreenRect)
     elif GAME_STATE == 2: # show end screen
         screen.blit(endScreen, endScreenRect)
         stopTimers()
 
-    nextPipe = None
+    nextPipe = None # check which pipe bird might collide next
     if len(pipes) > 1 and pipes[0].pos[0] < width/2 - 50:
         nextPipe = pipes[1]
     else:
@@ -162,11 +162,13 @@ while True:
         soundQ.put(1) # hitting sound
         if mainPlayer.pos.y < baseRect.y-10: # only when hitting the pipe
             soundQ.put(0) # falling sound 
-    if mainPlayer.pos.x == pipes[len(pipes)-1].pos[0]: # increase the score when bird passes pipe
+    
+    if mainPlayer.pos.x == nextPipe.pos[0] and not hasScored: # score calculations
         soundQ.put(2) 
         currScore+=1
-    # Sound Controller 
-    if soundQ.qsize() != 0 and not pg.mixer.music.get_busy():
+        hasScored = True
+    
+    if soundQ.qsize() != 0 and not pg.mixer.music.get_busy(): # Sound Controller 
         tempSound = soundQ.get()
         loadSfx(tempSound)
         pg.mixer.music.play()
