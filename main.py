@@ -48,6 +48,7 @@ def loadSfx(effectNum: int) -> None:
 # Scores
 score = []
 currScore = 0
+hasScored = False
 for i in range(10):
     score.append(pg.image.load("flappy-bird-assets/sprites/" + str(i) + ".png"))
     score[i].convert()
@@ -107,6 +108,7 @@ while True:
                     GAME_STATE = 0
                     soundQ.put(4) # play entering death menu soudn
                     currScore = 0
+                    hasScored = False
                     isFlashing = False
                     isDay = True
                     pipes.clear() # clear out all current pipes
@@ -154,6 +156,7 @@ while True:
     nextPipe = None # check which pipe bird might collide next
     if len(pipes) > 1 and pipes[0].pos[0] < width/2 - 50:
         nextPipe = pipes[1]
+        hasScored = False # scoring flag -- prevent player from scoring infinite point when bird happens to die at the same pos as pipe
     else:
         nextPipe = pipes[0]
     if not mainPlayer.display(baseRect, nextPipe.get_rect(), GAME_STATE) and GAME_STATE!= 2: # check collision while displaying bird
