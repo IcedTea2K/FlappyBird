@@ -187,4 +187,4 @@ while True:
 
     # print(time)
     pg.display.update()
-    fpsClock.tick(60) 
+    fpsClock.tick(60) # set fps to 60
