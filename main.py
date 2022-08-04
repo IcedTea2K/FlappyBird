@@ -168,7 +168,7 @@ while True:
         if mainPlayer.pos.y < baseRect.y-10: # only when hitting the pipe
             soundQ.put(0) # falling sound 
     
-    if mainPlayer.pos.x == nextPipe.pos[0] and not hasScored: # score calculations
+    if mainPlayer.pos.x == nextPipe.pos[0] and mainPlayer.pos.y > 0 and not hasScored: # score calculations
         soundQ.put(2) 
         currScore+=1
         hasScored = True # scoring flag -- prevent player from scoring infinite point when bird happens to die at the same pos as pipe
