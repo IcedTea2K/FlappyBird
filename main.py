@@ -53,6 +53,7 @@ for i in range(10):
     score.append(pg.image.load("flappy-bird-assets/sprites/" + str(i) + ".png"))
     score[i].convert()
 def drawScore() -> None: 
+    """Display the current score onto the screen"""
     if currScore < 10:
         rect = score[currScore].get_rect(center=(width/2, height/6))
         screen.blit(score[currScore], rect)
